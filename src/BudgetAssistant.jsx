@@ -24,13 +24,16 @@ export default function BudgetAssistant() {
       const { data, error } = await supabase.functions.invoke('budget-assistant', {
         body: { message: question },
       })
-      if (error) throw error
+      if (error) {
+        const details = typeof error.context?.json === 'function' ? await error.context.json().catch(() => null) : null
+        throw new Error(details?.error || error.message || 'Serverio klaida')
+      }
       if (typeof data?.reply !== 'string') throw new Error(data?.error || 'AI neatsakė.')
       setMessages((previous) => [...previous, { role: 'assistant', content: data.reply }])
-    } catch {
+    } catch (error) {
       setMessages((previous) => [...previous, {
         role: 'assistant',
-        content: 'Nepavyko gauti AI atsakymo. Patikrinkite funkcijos nustatymus arba bandykite vėliau.',
+        content: `Nepavyko gauti AI atsakymo: ${error.message || 'Nežinoma klaida'}`,
       }])
     } finally {
       setSending(false)

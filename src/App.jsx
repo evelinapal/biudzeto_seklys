@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import { supabase } from './supabaseClient'
 import './App.css'
+import BudgetAssistant from './BudgetAssistant'
 
 function App() {
   const [categories, setCategories] = useState([])
@@ -201,6 +202,7 @@ function App() {
           </ul>
         )}
       </div>
+      <BudgetAssistant />
     </div>
   )
 }
